@@ -82,7 +82,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Setup Kubeconfig
-        run: echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > ~/.kube/config
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > ~/.kube/config
 
       - name: Deploy Staging
         run: |
@@ -98,7 +100,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Setup Kubeconfig
-        run: echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > ~/.kube/config
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > ~/.kube/config
 
       - name: Deploy Production
         run: |
