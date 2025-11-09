@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: username/bookstore-backend:latest
+          image: arnab23/bookstore-backend:latest
           ports:
             - containerPort: 4000
           envFrom:
