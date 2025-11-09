@@ -70,6 +70,7 @@ jobs:
 
       - name: Deploy Dev
         run: |
+          kubectl apply -f k8s/dev/namespace.yaml
           kubectl apply -f k8s/dev/
           kubectl rollout status deploy/backend -n dev
           kubectl rollout status deploy/frontend -n dev
@@ -85,6 +86,7 @@ jobs:
 
       - name: Deploy Staging
         run: |
+          kubectl apply -f k8s/staging/namespace.yaml
           kubectl apply -f k8s/staging/
           kubectl rollout status deploy/backend -n staging
           kubectl rollout status deploy/frontend -n staging
@@ -99,7 +101,9 @@ jobs:
         run: echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > ~/.kube/config
 
       - name: Deploy Production
-        run: kubectl apply -f k8s/prod/
+        run: |
+          kubectl apply -f k8s/prod/namespace.yaml
+          kubectl apply -f k8s/prod/
 
       - name: Validate Deployment
         run: |
