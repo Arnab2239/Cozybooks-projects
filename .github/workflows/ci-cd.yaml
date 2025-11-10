@@ -1,4 +1,4 @@
-name: CozyBooks CI/CD Pipeline
+#name: CozyBooks CI/CD Pipeline
 
 on:
   push:
