@@ -1,243 +1,241 @@
-# CozyBooks – Full DevOps Project (Local → Production on AWS EKS)
-
-A complete microservices-based book‑store demo project deployed using **Docker, Kubernetes, AWS EKS, Route53, ACM SSL, ALB, CloudWatch & GitHub Actions CI/CD**.
+# 🚀 CozyBooks – Complete DevOps + Terraform + Kubernetes Project
 
 ---
 
 # 📚 1. Project Overview
 
-CozyBooks is a microservices web application containing:
+CozyBooks is a cloud‑native microservices application consisting of:
 
-* **Frontend**: Next.js (dynamic UI)
-* **Backend**: Express.js API
-* **REST communication** between services
-* Deployed locally using Docker Compose
-* Deployed in Production using **AWS EKS + AWS ALB + SSL + Route53**
+* **Frontend:** Next.js (React Framework)
+* **Backend:** Express.js REST API
+* **Database:** (Optional extension – MongoDB / DynamoDB)
+* **Communication:** REST API between microservices
+* **Local environment:** Docker Compose
+* **Production environment:** AWS EKS + ALB + SSL + Route53
+* **Infrastructure as Code:** Terraform
 
 ---
 
-# 📁 2. Repository Structure
+# 📁 2. Repository Structure (With Terraform)
 
 ```
 book_store_project/
 │
-├── frontend/                # Next.js Application
-├── backend/                 # Express.js API
+├── frontend/                     # Next.js Application
+├── backend/                      # Express.js API
 │
-├── docker-compose.yml       # Local development
+├── docker-compose.yml            # Local Dev using Docker Compose
 │
-├── k8s/
+├── k8s/                          # Kubernetes YAMLs
 │   ├── dev/
 │   ├── staging/
 │   └── prod/
 │
-├── .github/workflows/
-│   └── ci-cd.yaml           # GitHub Actions CI/CD Pipeline
-│--- terraform
-└── alb-setup/               # ALB + SSL + IAM roles setup
+├── alb-setup/                    # ALB Ingress + IAM + SSL Setup
+│
+├── terraform/                    # Entire Cloud Infrastructure
+│   ├── vpc/                      # VPC, subnets, routing
+│   ├── eks/                      # EKS cluster + node groups
+│   ├── S3/
+│   ├── security_group
+│   ├── outputs.tf                # Exposed values
+│   ├── variables.tf              # Variables
+│   
+│
+└── .github/workflows/            # CI/CD Pipeline
+    └── ci-cd.yaml
 ```
 
 ---
 
-# 🧱 3. Architecture Diagram
+# 🧱  Architecture (Terraform + AWS)
 
-```mermaid
-graph TD;
-    A[Developer Machine] -->|Docker Compose Up| B(Local Environment);
-    B --> FE1[Frontend Container];
-    B --> BE1[Backend Container];
+### **High‑Level Architecture Components**
 
-    A -->|Git Push| CI[GitHub Actions];
-    CI -->|Build & Push Images;
-    CI -->|kubectl apply| EKS;
+* **Terraform** provisions:
 
-    subgraph Cloud [AWS Cloud]
-        EKS[EKS Cluster]
-        ALB[Application Load Balancer]
-        FE[Frontend Deployment]
-        BE[Backend Deployment]
-        SVC_FE[Frontend Service]
-        SVC_BE[Backend Service]
-        CW[CloudWatch Logs + Metrics]
-        ACM[ACM SSL Certificate]
-        R53[Route53 DNS Domain]
-    end
+  * VPC (public + private subnets)
+  * S3
+  * EKS cluster + node groups
 
-    EKS --> FE
-    EKS --> BE
-    FE --> SVC_FE
-    BE --> SVC_BE
+* **Kubernetes** deploys:
 
-    ALB --> SVC_FE
-    ALB --> SVC_BE
-
-    R53 --> ALB
-    ACM --> ALB
-    EKS --> CW
-```
+  * Frontend Deployment + Service
+  * Backend Deployment + Service
+  * ConfigMap & Secrets
+  * Horizontal Pod Autoscalers (HPA)
+  * ALB Ingress
+* **CloudWatch** for logs and dashboards
+* **GitHub Actions** for CI/CD
 
 ---
 
-# 🚀 4. Local Development (Docker Compose)
+### **How to deploy Terraform**
 
-Run both microservices locally:
+```bash
+cd terraform
+terraform init
+terraform validate
+terraform plan
+terraform apply -auto-approve
+```
+
+### What Terraform Outputs
+
+* VPC ID
+* Public/Private subnets
+* EKS cluster name
+* Node group details
+* ALB DNS name
+* Route53 hostname
+
+---
+
+# 🐳  Local Development – Docker Compose
+
+Run full stack locally:
 
 ```bash
 docker compose up --build
 ```
 
-### ✔️ Benefits
+### Benefits:
 
-* Easy local development
-* One command = full stack ready
-* Consistent environment matching production
-* No need to install Node.js locally
-
----
-
-# 🐳 5. Containerization (Docker)
-
-### Backend & Frontend use:
-
-* Multi‑stage builds → smaller images
-* Environment variables using build args
-* Production optimized images
-
-### ✔️ Benefits
-
-* Fast deployments
-* Lightweight images
-* Portable across machines & cloud
+* Same environment as production
+* Quick testing
+* Portable setup
 
 ---
 
-# ☸️ 6. Kubernetes (Dev / Staging / Prod)
+# ☸️  Kubernetes Deployments
 
-### Includes:
+Environments:
+
+* **dev**
+* **staging**
+* **prod**
+
+K8s includes:
 
 * Deployments
-* Services
+* Services (ClusterIP)
 * ConfigMaps
 * Secrets
-* HPAs (Auto‑scaling)
+* HPAs
 * Namespaces
-* Ingress (ALB)
+* Ingress with ALB
 
-### ✔️ Benefits
+Apply production manifests:
 
-* Auto‑scaling
-* Self‑healing pods
-* Separate environments (dev/staging/prod)
-* Rolling updates
-
----
-
-# 🌐 7. AWS Infrastructure
-
-### Components:
-
-* **EKS Cluster** (managed Kubernetes)
-* **AWS Load Balancer Controller** for ALB
-* **ACM SSL Certificate** for HTTPS
-* **Route 53** domain mapping
-* **CloudWatch Dashboards + Logs**
-
-### ✔️ Benefits
-
-* Fully secure HTTPS production site
-* Global traffic routing
-* Automatic scaling and monitoring
-* Integrated logs + metrics
+```bash
+kubectl apply -f k8s/prod/
+```
 
 ---
 
-# 🔐 8. Security
+# 🌐  Domain + SSL (Route53 + ACM + ALB)
 
-* Kubernetes Secrets for API keys
-* No hardcoded passwords
-* IAM Roles for Service Accounts (IRSA)
-* ALB security groups
-* HTTPS enforced
+### Steps:
 
-### ✔️ Benefits
+1. Buy or use an existing domain (litecodex.in)
+2. Create Record Set in Route53 → point to ALB DNS
+3. Request ACM SSL certificate
+4. Validate via CNAME
+5. Add annotation in ingress:
 
-* Industry standard DevSecOps
-* Zero hardcoded credentials
-* Encrypted communication end‑to‑end
+```yaml
+alb.ingress.kubernetes.io/certificate-arn: <ACM-ARN>
+```
 
----
-
-# 🔄 9. CI/CD Pipeline (GitHub Actions)
-
-Pipeline tasks:
-
-1. Lint + test
-2. Build Docker images
-3. Push to DockerHub
-4. Deploy to Kubernetes using kubectl
-5. Rollback on failure
-
-### ✔️ Benefits
-
-* Zero‑downtime deployments
-* Fully automated delivery
-* Automatic rollback safeguards
-* Guaranteed consistent builds
+6. Enforce HTTPS redirection
 
 ---
 
-# 📊 10. CloudWatch Logging & Monitoring
+# 📡  CI/CD – GitHub Actions
+
+Pipeline performs:
+
+1. Build frontend + backend Docker images
+2. Push to DockerHub
+3. Connect to EKS
+4. Apply Kubernetes YAML automatically
+5. Rollback if failure
+
+---
+
+# 🔐  Security Best Practices
+
+* IRSA (IAM Roles for Service Accounts)
+* Kubernetes Secrets instead of hardcoded data
+* SSL mandatory (HTTPS only)
+* Security groups restrict access
+* Terraform remote backend (S3 + DynamoDB) recommended
+
+---
+
+# 📊  Monitoring – CloudWatch
 
 You configured:
 
-* Application logs
-* Dataplane logs
+* Application logs `/aws/containerinsights/.../application`
+* Cluster performance `/aws/containerinsights/.../performance`
 * Node/host logs
-* Performance/metrics
 * Dashboards
 
-### ✔️ Benefits
+Add metrics:
 
-* Real‑time system health monitoring
-* Helps detect errors fast
-* Performance optimization
-
----
-
-# 📄 11. Deployment Flow Summary
-
-1. **Write code** → push to GitHub
-2. GitHub Actions **builds images + pushes to registry**
-3. Pipeline deploys to **EKS dev → staging → prod**
-4. ALB exposes services via HTTPS
-5. Route53 domain points to ALB
-6. CloudWatch monitors logs & metrics
+* Node CPU usage
+* Pod restarts
+* ALB request count
+* 5xx/4xx errors
 
 ---
 
-# 📝 12. How to Scale
+# 📄  Deployment Flow
 
-### Horizontal auto‑scaling:
-
-* Increase pod replicas using HPA (CPU threshold)
-
-```bash
-kubectl get hpa -n prod
+```
+Developer → GitHub → CI/CD → DockerHub → EKS → ALB → User
 ```
 
-# 📌 13. Production URL
+1. Developer pushes code
+2. Actions builds + pushes Docker images
+3. CI deploys to **dev → staging → prod**
+4. ALB exposes endpoint
+5. SSL secures traffic
+
+---
+
+# 📌  Production URL
 
 **[https://litecodex.in](https://litecodex.in)**
-(Available after ALB + Route53 + ACM SSL)
+
+---
+
+# 📘  Future Enhancements
+
+* Add Prometheus + Grafana
+* Add ArgoCD 
+* Add Terraform remote backend
+* Add Vertical Pod Autoscaler
 
 ---
 
 # ✅ Project Completed
 
-This project covers the **entire DevOps lifecycle** from local Docker to Production Kubernetes on AWS.
+This project demonstrates **real-world DevOps skills** across:
+✔ Containers
+✔ Kubernetes
+✔ AWS EKS
+✔ Terraform IaC
+✔ CI/CD
+✔ Monitoring
+✔ SSL + Domain
+✔ Load balancing
 
-If you want, I can also generate:
-✅ Terraform version for entire infrastructure
-✅ Professional resume points
-✅ Architecture PowerPoint
-✅ Interview preparation based on this project
+A perfect project for:
+
+* DevOps Resume
+* Job Interviews
+* Portfolio
+* Production-ready apps
+
