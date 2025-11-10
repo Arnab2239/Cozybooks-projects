@@ -78,16 +78,6 @@ terraform init
 terraform validate
 terraform plan
 terraform apply -auto-approve
-```
-
-### What Terraform Outputs
-
-* VPC ID
-* Public/Private subnets
-* EKS cluster name
-* Node group details
-* ALB DNS name
-* Route53 hostname
 
 ---
 
