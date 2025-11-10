@@ -124,6 +124,8 @@ jobs:
       - name: Deploy Production
         run: |
           kubectl apply -f k8s/prod/namespace.yaml
+          kubectl apply -f k8s/prod/ingress-alb.yaml
+
           kubectl apply --validate=false -f k8s/prod/
 
 
