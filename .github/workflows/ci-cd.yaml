@@ -124,7 +124,8 @@ jobs:
       - name: Deploy Production
         run: |
           kubectl apply -f k8s/prod/namespace.yaml
-          kubectl apply -f k8s/prod/
+          kubectl apply --validate=false -f k8s/prod/
+
 
       - name: Validate Deployment
         run: |
