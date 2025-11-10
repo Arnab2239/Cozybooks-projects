@@ -8,8 +8,9 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:eu-west-1:864546685355:certificate/ba817bb9-ff41-4a09-a305-1c13adb17e66
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:eu-west-1:864546685355:certificate/a51ad516-cddb-4ee8-b91b-0ffc53c5ffc7
     alb.ingress.kubernetes.io/ssl-redirect: "443"
+
 spec:
   rules:
   - host: litecodex.in
