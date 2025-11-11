@@ -1,6 +1,6 @@
-#name: CozyBooks CI/CD Pipeline
+name: CozyBooks CI/CD Pipeline
 
-#on:
+on:
   push:
     branches: [ "main" ]
   pull_request:
